@@ -1,0 +1,20 @@
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.admin.models import LogEntry
+from django.template.response import TemplateResponse
+from main import models
+
+@admin.register(LogEntry)
+class LoggingAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in LogEntry._meta.get_fields()]
+    list_filter = ('action_time',)
+
+@admin.register(models.Supplies)
+class SupplyAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in models.Supplies._meta.fields]
+    list_filter = ('agent_id', 'count')
+
+@admin.register(models.Agents)
+class AgentsAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in models.Agents._meta.fields]
+    list_filter = ('type',)

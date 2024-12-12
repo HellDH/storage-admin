@@ -83,5 +83,5 @@ class UserAdmin(admin.ModelAdmin):
 
 @register(Group, site=admin_site)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = [f.name for f in Group._meta.fiels]
+    list_display = [f.name for f in Group._meta.fields]
 

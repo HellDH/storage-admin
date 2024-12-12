@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Count
 
+from djmoney.models.fields import MoneyField
+
 import uuid
 
 class AgentType(models.TextChoices):
@@ -34,6 +36,7 @@ class Supply(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True)
     count = models.IntegerField(default=1)
+    item_price = MoneyField(max_digits=19, decimal_places=4, default_currency='RUB', null=True)
     agent_id = models.ForeignKey(Agent, on_delete=models.DO_NOTHING)
     cell_id = models.ForeignKey(Cell, on_delete=models.CASCADE)
     

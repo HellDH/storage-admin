@@ -29,7 +29,7 @@ class InventPageView(APIView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class AnalysisPageView(APIView):
-    def post(self, request):
+    def get(self, request):
         data = Supply.objects.all()
         labels = [item.name for item in data]
         values = [item.count for item in data]
@@ -40,9 +40,6 @@ class AnalysisPageView(APIView):
         }
 
         return render(request, 'graph/charts.html', context)
-
-    def get(self, request):
-        return render(request, 'graph/charts.html')
 
 def index(request):
     return redirect('admin/', permanent=True)

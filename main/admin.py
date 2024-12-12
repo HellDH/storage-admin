@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.admin import register
 from django.contrib.admin.models import LogEntry
 
@@ -50,13 +50,13 @@ admin_site = CustomAdminSite()
 @register(LogEntry, site=admin_site)
 class LoggingAdmin(admin.ModelAdmin):
     list_display = [f.name for f in LogEntry._meta.get_fields()]
-    list_filter = ('action_time',)
+    list_filter = ('action_time', 'user_id')
     list_per_page=50
 
 @register(models.Supply, site=admin_site)
 class SupplyAdmin(admin.ModelAdmin):
     list_display = [f.name for f in models.Supply._meta.fields]
-    list_filter = ('agent_id', 'count')
+    list_filter = ('agent_id', 'count', 'item_price', 'name')
     list_per_page=50
 
 @register(models.Agent, site=admin_site)
@@ -80,4 +80,8 @@ class CellAdmin(admin.ModelAdmin):
 @register(User, site=admin_site)
 class UserAdmin(admin.ModelAdmin):
     list_display = [f.name for f in User._meta.fields]
+
+@register(Group, site=admin_site)
+class GroupAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in Group._meta.fiels]
 

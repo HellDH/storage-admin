@@ -33,6 +33,7 @@ INSTALLED_APPS = [
 
     'main',
     'operations',
+    'djmoney',
 
     'rest_framework',
 ]

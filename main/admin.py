@@ -25,14 +25,14 @@ class CustomAdminSite(admin.AdminSite):
                     'admin_url': reverse('inventory_page'),
                     'add_url': None,
                     'view_only': True,
-                },"""
+                },
                 {
-                    'name': 'Приложение 2',
-                    'object_name': 'External2',
-                    'admin_url': '/admin/external-view-2/',
+                    'name': 'Графики',
+                    'object_name': 'graphs',
+                    'admin_url': reverse('graph_page'),
                     'add_url': None,
                     'view_only': True,
-                },"""
+                },
             ]
         })
         return app_list
@@ -41,6 +41,7 @@ class CustomAdminSite(admin.AdminSite):
         urls = super().get_urls()
         custom_urls = [
             path('inventory/', self.admin_view(views.InventPageView.as_view()), name='inventory_page'),
+            path('graph/', self.admin_view(views.AnalysisPageView.as_view()), name='graph_page')
         ]
         return custom_urls + urls
 
@@ -71,8 +72,12 @@ class StackAdmin(admin.ModelAdmin):
 
 @register(models.Cell, site=admin_site)
 class CellAdmin(admin.ModelAdmin):
-    list_display = [f.name for f in models.Cell._meta.fields] + ['is_filled']
+    list_display = [f.name for f in models.Cell._meta.fields]
     list_filter = ('location',)
     readonly_fields = ('is_filled',)
     list_per_page=50
+
+@register(User, site=admin_site)
+class UserAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in User._meta.fields]
 

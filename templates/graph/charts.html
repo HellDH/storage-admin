@@ -1,0 +1,40 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+
+    <div style="width: 80%; margin: auto;">
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <script>
+        // Передача данных из Django через контекст
+        const labels = JSON.parse('{{ labels|default:"[]"|escapejs }}');
+        const data = JSON.parse('{{ values|default:"[]"|escapejs }}');
+
+        // Создание графика
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar', // Тип графика (можно изменить на 'line', 'pie' и т.д.)
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sales Amount',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock %}
+

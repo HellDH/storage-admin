@@ -8,7 +8,8 @@ from main.admin import admin_site
 urlpatterns = [
     path('', views.index),
     path('admin/', admin_site.urls),
-    path('admin/inventory/', views.InventPageView.as_view(), name='inventory_page')    
+    path('admin/inventory/', views.InventPageView.as_view(), name='inventory_page'),
+    path('admin/graph/', views.AnalysisPageView.as_view(), name='graph_page')
 ]
 
 if settings.DEBUG:

@@ -54,4 +54,15 @@ class Supply(models.Model):
         record.save()
 
         super().delete(*args, **kwargs)
+    
+    def update(self, *args, **kwargs):
+        prev_record = Cell.objects.get(id=vars(self.cell_id)['id'])
+        prev_record.is_filled = False
+        prev_record.save()
+
+        super().update(*args, **kwargs)
+
+        next_record = Cell.objects.get(id=vars(self.cell_id)['id'])
+        next_record.is_filled = True
+        next_record.save()
 

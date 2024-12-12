@@ -1,0 +1,76 @@
+<!-- templates/sales_chart.html -->
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <h1>Инвентаризация склада</h1>
+
+    <form id="dynamic-form">
+		{% csrf_token %}
+        <table id="input-table" border="1">
+            <thead>
+                <tr>
+                    <th>Название товара</th>
+					<th>Факт. Количество</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="datanm" placeholder="Введите название"></td>
+					<td><input type="number" name="datacn" placeholder="Введите количество"></td>
+					<td><button type="button" class="remove-row">Удалить</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" id="add-row">Добавить строку</button>
+        <button type="submit">Провести Инвентаризацию</button>
+    </form>
+
+    <h2>Соответствие:</h2>
+    <div id="server-response">
+        <ul id="response-list"></ul>
+    </div>
+
+    <script>
+$(document).ready(function () {
+    // Добавить строку
+    $("#add-row").click(function () {
+        const newRow = `
+            <tr>
+				<td><input type="text" name="datanm" placeholder="Введите название"></td>
+				<td><input type="number" name="datacn" placeholder="Введите количество"></td>
+                <td><button type="button" class="remove-row">Удалить</button></td>
+            </tr>`;
+        $("#input-table tbody").append(newRow);
+    });
+
+    // Удалить строку
+    $(document).on('click', '.remove-row', function () {
+        $(this).closest('tr').remove();
+    });
+
+    $("#dynamic-form").submit(function (event) {
+        event.preventDefault();
+
+        const formData = $(this).serialize();
+
+        $.ajax({
+            url: "{% url 'inventory_page' %}",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+                $("#response-list").empty();
+
+                response.response.forEach(function (item) {
+                    $("#response-list").append(`<li>${item}</li>`);
+                });
+            },
+            error: function () {
+                alert("Ошибка при обработке запроса.");
+            }
+        });
+    });
+});
+    </script>
+{% endblock %}
+

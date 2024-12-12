@@ -8,6 +8,11 @@
 <a href="{% url 'admin:index' %}" style="color:brown; font-style:italic; font-size: 40px; font-weight: 600;">{% if user.has_usable_password %}<img src="{% static 'img/admin.png' %}" width="40" height="40">{% endif %}Администрация Склада</a>
 {% endblock %}
 
+{% block extrahead %}
+	{{ block.super }}
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
 {% block extrastyle %}
 <style>
     #header {
@@ -88,4 +93,41 @@
 </h1>
 {% endblock %}
 
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    <div class="app-dashboard">
+        <h2>Операции</h2>
+        <ul>
+            {% for link in operations %}
+            <li>
+                <a href="{{ link.url }}">{{ link.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="app-list">
+        {% for app in app_list %}
+        <div class="app">
+            <table>
+                <caption>
+                    <a href="{{ app.app_url }}">{{ app.name }}</a>
+                </caption>
+                <tbody>
+                    {% for model in app.models %}
+                    <tr>
+                        <th scope="row">
+                            <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                        </th>
+                        <td>{{ model.perms }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
 

@@ -9,7 +9,13 @@ from django.urls import reverse
 from django.urls import path
 from django.utils.html import format_html
 
-from main import models, views
+from django.contrib.admin.filters import SimpleListFilter
+
+from django.contrib.contenttypes.models import ContentType
+
+from django.utils.safestring import mark_safe
+
+from main import models, views, utils
 
 class CustomAdminSite(admin.AdminSite):
     # Переопределение метода get_app_list для добавление новых ссылок в главное меню
@@ -47,11 +53,42 @@ class CustomAdminSite(admin.AdminSite):
 
 admin_site = CustomAdminSite()
 
+class UsernameFilter(SimpleListFilter):
+    title = 'Имя пользователя'
+    parameter_name = 'username'
+
+    def lookups(self, request, model_admin):
+        usernames = User.objects.values_list('username', flat=True).distinct()
+        return [(username, username) for username in usernames]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(user__username=self.value())
+        return queryset
+
 @register(LogEntry, site=admin_site)
 class LoggingAdmin(admin.ModelAdmin):
-    list_display = [f.name for f in LogEntry._meta.get_fields()]
+    list_display = ['action_time', 'user', 'content_type', 'object_link', 'action_flag', 'change_message_custom']
     list_filter = ('action_time', 'user_id')
     list_per_page=50
+
+    search_fields = ['user__username', 'object_repr', 'change_message']
+    list_filter = [UsernameFilter, 'user', 'content_type', 'action_flag']
+
+    def user_link(self, obj):
+        ct = ContentType.objects.get_for_model(User)
+        url = reverse(f"admin:{ct.app_label}_{ct.model}_change", args=[obj.user_id])
+
+    user_link.allow_tags = True
+    user_link.short_description = 'User'
+
+    def object_link(self, obj):
+        return obj.object_repr
+
+    def change_message_custom(self, obj):
+        return utils._get_change_message(obj)
+
+    change_message_custom.short_description = "Изменения"
 
 @register(models.Supply, site=admin_site)
 class SupplyAdmin(admin.ModelAdmin):

@@ -29,6 +29,7 @@ class InventPageView(APIView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class AnalysisPageView(APIView):
+    # TODO: Графики сделать на matplotlib, убрать javascript из шаблона в дальнейшем
     def get(self, request):
         data = Supply.objects.all()
         labels = [item.name for item in data]

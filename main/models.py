@@ -39,13 +39,16 @@ class Supply(models.Model):
     item_price = MoneyField(max_digits=19, decimal_places=4, default_currency='RUB', null=True)
     agent_id = models.ForeignKey(Agent, on_delete=models.DO_NOTHING)
     cell_id = models.ForeignKey(Cell, on_delete=models.CASCADE)
-    
+
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         queryset = type(self).objects.filter(cell_id=self.cell_id).annotate(Count('cell_id'))
 
-        if queryset.exists() and queryset.first().count >= 1:
-            raise Exception('Максимальное количество ссылок (1) достигнуто.')
-        
+        if not self.pk:
+            if queryset.exists() and queryset.first().count >= 1:
+                raise Exception("На одну записиь может быть только 1 ссылка")
 
         super().save(*args, **kwargs)
         
